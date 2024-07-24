@@ -48,13 +48,11 @@ namespace Demo.Repository
             }
         }
 
-        public virtual async Task<IEnumerable<T>> FindAllAsync(int start, int limit, string q)
+        public virtual async Task<IEnumerable<T>> FindAllAsync()
         {
             try
             {
-                var skip = (start - 1) * limit;
-                
-                var tList = await context.Set<T>().Skip(skip).Take(limit).ToListAsync();
+                var tList = await context.Set<T>().ToListAsync();
                 return tList;
             }
             catch (Exception e)
