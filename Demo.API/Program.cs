@@ -21,6 +21,10 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 
+
+builder.Services.AddScoped<IGenderRepository, GenderRepository>();
+builder.Services.AddScoped<IGenderServices, GenderServices>();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

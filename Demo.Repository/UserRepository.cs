@@ -54,26 +54,34 @@ namespace Demo.Repository
 
         }
 
-        public override async Task<IEnumerable<User>> FindAllAsync(int start, int limit, string q)
-        {
-            try
-            {
-                var skip = (start - 1) * limit;
-                var users = await context.Users.Where(e => e.Name.StartsWith(q)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
-                return users;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
+        //public override async Task<IEnumerable<User>> FindAllAsync(int start, int limit, string q)
+        //{
+        //    try
+        //    {
+        //        var skip = (start - 1) * limit;
+        //        var users = await context.Users.Where(e => e.Name.StartsWith(q)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
+        //        return users;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw;
+        //    }
+        //}
 
         public async Task<IEnumerable<User>> FindAllWithFilters(int start, int limit, string q, int genderId)
         {
             try
             {
                 var skip = (start - 1) * limit;
-                var users = await context.Users.Where(e => e.Name.StartsWith(q)).Where(e=>e.GenderId.Equals(genderId)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
+                IEnumerable<User> users;
+                if (genderId != 0)
+                {
+                    users = await context.Users.Where(e => e.Name.StartsWith(q)).Where(e => e.GenderId.Equals(genderId)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
+                }
+                else
+                {
+                    users = await context.Users.Where(e => e.Name.StartsWith(q)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
+                }
                 return users;
             }
             catch (Exception e)

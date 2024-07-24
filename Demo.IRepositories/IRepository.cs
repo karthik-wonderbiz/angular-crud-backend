@@ -11,7 +11,7 @@ namespace Demo.IRepositories
     {
         Task<T> FindByIdAsync(int id);
 
-        Task<IEnumerable<T>> FindAllAsync(int start, int limit, string q);
+        Task<IEnumerable<T>> FindAllAsync();
 
         Task<bool> DeleteAsync(T t);
 

@@ -81,19 +81,11 @@ namespace Demo.Services
             try
             {
                 int roleId;
-                IEnumerable<User> users;
                 start = start == 0 ? 1 : start;
                 limit = limit == 0 ? 10 : limit;
                 q = q ?? "";
-                if (filter != null)
-                {
-                    roleId = await userRepository.FindGenderByNameAsync(filter);
-                    users = await userRepository.FindAllWithFilters(start, limit, q, roleId);
-                }
-                else
-                {
-                    users = await userRepository.FindAllAsync(start, limit, q);
-                }
+                roleId = await userRepository.FindGenderByNameAsync(filter);
+                var users = await userRepository.FindAllWithFilters(start, limit, q, roleId);
                 var mappedUsers = users.Select(x => new UserDTO(
                     x.UserId,
                     x.Name,
