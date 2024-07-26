@@ -20,11 +20,11 @@ namespace Demo.API.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> Get([FromQuery]int start, [FromQuery] int limit, [FromQuery] string? q, [FromQuery] string? filter)
+        public async Task<ActionResult<PaginatedUsersDTO>> Get([FromQuery] int start, [FromQuery] int limit, [FromQuery] string? q, [FromQuery] string? filter)
         {
             try
             {
-                var users = await userServices.GetAllUsersAsync(start,limit,q, filter);
+                var users = await userServices.GetAllUsersAsync(start, limit, q, filter);
                 return Ok(users);
             }
             catch (Exception e)

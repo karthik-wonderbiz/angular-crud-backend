@@ -1,7 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Demo.DTO
+
 {
+    public record PaginatedUsersDTO(
+        int Count,
+        int Page,
+        int Limit,
+        IEnumerable<UserDTO> Users
+        );
     public record CreateUserDTO(
         [Required(ErrorMessage = "Please provide name")] string Name,
         [Required(ErrorMessage = "Please provide email")] string Email,
@@ -10,7 +17,7 @@ namespace Demo.DTO
         [Required(ErrorMessage = "Please provide user id of user Creating record")] int CreatedBy
         );
     public record UpdateUserDTO(
-        [Required(ErrorMessage ="Please provide user id")]int UserId,
+        [Required(ErrorMessage = "Please provide user id")] int UserId,
         string? Name,
         string? Email,
         bool? IsActive,
@@ -23,6 +30,7 @@ namespace Demo.DTO
         string Email,
         bool IsActive,
         string Gender,
+        int GenderId,
         DateTimeOffset CreatedDate
     );
 

@@ -30,7 +30,7 @@ namespace Demo.Repository
                 }
                 throw new KeyNotFoundException($"No user with Id: {id}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -47,7 +47,7 @@ namespace Demo.Repository
                 }
                 throw new KeyNotFoundException($"No user with Id: {id}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -68,21 +68,29 @@ namespace Demo.Repository
         //    }
         //}
 
-        public async Task<IEnumerable<User>> FindAllWithFilters(int start, int limit, string q, int genderId)
+        public async Task<(Dictionary<string, int>, IEnumerable<User>)> FindAllWithFilters(int start, int limit, string q, string genderName)
         {
+
+
             try
             {
                 var skip = (start - 1) * limit;
-                IEnumerable<User> users;
-                if (genderId != 0)
+                var query = context.Users.Where(e => e.Name.Contains(q) || e.Email.Contains(q));
+
+                var filterQuery = query.Include(g => g.Gender).Where(gn => genderName != "" ? gn.Gender.GenderName.Equals(genderName) : gn.Gender.GenderName.Contains(genderName));
+
+                var data = await filterQuery.Select(x => new { Data = x, Count = filterQuery.Count() })
+                .Skip(skip).Take(limit)
+                .ToListAsync();
+
+                var totalCount = data.FirstOrDefault()?.Count ?? 0;
+                var totalPages = (int)Math.Ceiling((double)totalCount / limit);
+                var users = data.Select(x => x.Data).ToList();
+                var result = new Dictionary<string, int>
                 {
-                    users = await context.Users.Where(e => e.Name.StartsWith(q)).Where(e => e.GenderId.Equals(genderId)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
-                }
-                else
-                {
-                    users = await context.Users.Where(e => e.Name.StartsWith(q)).Skip(skip).Take(limit).Include(g => g.Gender).ToListAsync();
-                }
-                return users;
+                    { "Count", totalPages }
+                };
+                return (result, users);
             }
             catch (Exception e)
             {
