@@ -43,6 +43,7 @@ namespace Demo.Services
                     populatedUser.Email,
                     populatedUser.IsActive,
                     populatedUser.Gender.GenderName,
+                    populatedUser.Gender.GenderId,
                     populatedUser.CreatedDate
                 );
                 return mappedUser;
@@ -76,25 +77,29 @@ namespace Demo.Services
             }
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync(int start, int limit, string q, string filter)
+        public async Task<PaginatedUsersDTO> GetAllUsersAsync(int start, int limit, string q, string filter)
         {
             try
             {
-                int roleId;
+                filter = filter ?? "";
                 start = start == 0 ? 1 : start;
                 limit = limit == 0 ? 10 : limit;
                 q = q ?? "";
-                roleId = await userRepository.FindGenderByNameAsync(filter);
-                var users = await userRepository.FindAllWithFilters(start, limit, q, roleId);
-                var mappedUsers = users.Select(x => new UserDTO(
+                var users = await userRepository.FindAllWithFilters(start, limit, q, filter);
+                var allUsers = new PaginatedUsersDTO(
+                        users.Item1["Count"],
+                        start,
+                        limit,
+                        users.Item2.Select(x => new UserDTO(
                     x.UserId,
                     x.Name,
                     x.Email,
                     x.IsActive,
                     x.Gender.GenderName,
+                    x.Gender.GenderId,
                     x.CreatedDate
-                ));
-                return mappedUsers;
+                )));
+                return allUsers;
             }
             catch (Exception e)
             {
@@ -115,6 +120,7 @@ namespace Demo.Services
                         user.Email,
                         user.IsActive,
                         user.Gender.GenderName,
+                        user.Gender.GenderId,
                         user.CreatedDate
                     );
                     return mappedUser;
@@ -141,6 +147,7 @@ namespace Demo.Services
                     oldUser.UpdatedBy = updateUserDTO.UpdatedBy;
                     oldUser.UpdatedDate = DateTimeOffset.Now;
                     var updatedUser = await userRepository.UpdateAsync(oldUser);
+
                     var populatedUser = await userRepository.FindByIdAsync(updatedUser.UserId);
                     var mappedUser = new UserDTO(
                         populatedUser.UserId,
@@ -148,16 +155,18 @@ namespace Demo.Services
                         populatedUser.Email,
                         populatedUser.IsActive,
                         populatedUser.Gender.GenderName,
+                        populatedUser.Gender.GenderId,
                         populatedUser.CreatedDate
                     );
                     return mappedUser;
                 }
                 throw new KeyNotFoundException($"No user with Id: {id}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
         }
+
     }
 }

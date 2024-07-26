@@ -9,7 +9,7 @@ namespace Demo.IServices
 {
     public interface IUserServices
     {
-        Task<IEnumerable<UserDTO>> GetAllUsersAsync(int start, int limit, string q, string filter);
+        Task<PaginatedUsersDTO> GetAllUsersAsync(int start, int limit, string q, string filter);
 
         Task<UserDTO> GetUserByIdAsync(int id);
 

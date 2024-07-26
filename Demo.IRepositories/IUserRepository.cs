@@ -12,6 +12,6 @@ namespace Demo.IRepositories
         Task<User> FindUserByIdAsync(int id);
         Task<int> FindGenderByNameAsync(string genderName);
 
-        Task<IEnumerable<User>> FindAllWithFilters(int start, int limit, string q, int genderId);
+        Task<(Dictionary<string, int>, IEnumerable<User>)> FindAllWithFilters(int start, int limit, string q, string genderName);
     }
 }

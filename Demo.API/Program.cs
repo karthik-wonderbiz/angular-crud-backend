@@ -16,6 +16,17 @@ builder.Services.AddDbContext<DemoDBContext>(option =>
     option.UseSqlServer(connectionString, b => b.MigrationsAssembly("Demo.API"));
     option.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowMyAngularApp",
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                      });
+});
+
+
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -44,7 +55,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCors("AllowMyAngularApp");
 app.MapControllers();
 
 app.UseCors("AllowAngularApp");
